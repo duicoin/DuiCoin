@@ -26,8 +26,8 @@ extern int nBestHeight;
 
 
 
-inline uint64_t ReceiveBufferSize() { return 1000*GetArg("-maxreceivebuffer", 5*1000); }
-inline uint64_t SendBufferSize() { return 1000*GetArg("-maxsendbuffer", 1*1000); }
+inline unsigned int ReceiveBufferSize() { return 1000*GetArg("-maxreceivebuffer", 5*1000); }
+inline unsigned int SendBufferSize() { return 1000*GetArg("-maxsendbuffer", 1*1000); }
 
 void AddOneShot(std::string strDest);
 bool RecvLine(SOCKET hSocket, std::string& strLine);
@@ -135,17 +135,18 @@ extern std::map<CInv, int64> mapAlreadyAskedFor;
 class CNodeStats
 {
 public:
-    uint64_t nServices;
-    int64_t nLastSend;
-    int64_t nLastRecv;
-    int64_t nTimeConnected;
+    uint64 nServices;
+    int64 nLastSend;
+    int64 nLastRecv;
+    int64 nTimeConnected;
     std::string addrName;
-    int32_t nVersion;
+    int nVersion;
     std::string strSubVer;
     bool fInbound;
-    int64_t nReleaseTime;
-    int32_t nStartingHeight;
-    int32_t nMisbehavior;
+    int64 nReleaseTime;
+    int nStartingHeight;
+    int nMisbehavior;
+
     uint64_t nSendBytes;
     uint64_t nRecvBytes;
     bool fSyncNode;
@@ -160,7 +161,7 @@ class CNode
 {
 public:
     // socket
-    uint64_t nServices;
+    uint64 nServices;
     SOCKET hSocket;
     CDataStream vSend;
     CDataStream vRecv;
@@ -177,7 +178,7 @@ public:
     CAddress addr;
     std::string addrName;
     CService addrLocal;
-    int32_t nVersion;
+    int nVersion;
     std::string strSubVer;
     bool fOneShot;
     bool fClient;
@@ -191,7 +192,7 @@ protected:
 
     // Denial-of-service detection/prevention
     // Key is IP address, value is banned-until-time
-    static std::map<CNetAddr, int64_t> setBanned;
+    static std::map<CNetAddr, int64> setBanned;
     static CCriticalSection cs_setBanned;
     int nMisbehavior;
 
@@ -202,7 +203,7 @@ public:
     uint256 hashContinue;
     CBlockIndex* pindexLastGetBlocksBegin;
     uint256 hashLastGetBlocksEnd;
-    int32_t nStartingHeight;
+    int nStartingHeight;
     bool fStartSync;
 
     // flood relay
@@ -216,7 +217,7 @@ public:
     mruset<CInv> setInventoryKnown;
     std::vector<CInv> vInventoryToSend;
     CCriticalSection cs_inventory;
-    std::multimap<int64_t, CInv> mapAskFor;
+    std::multimap<int64, CInv> mapAskFor;
 
     CNode(SOCKET hSocketIn, CAddress addrIn, std::string addrNameIn = "", bool fInboundIn=false) : vSend(SER_NETWORK, MIN_PROTO_VERSION), vRecv(SER_NETWORK, MIN_PROTO_VERSION)
     {
