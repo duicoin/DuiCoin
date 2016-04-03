@@ -196,7 +196,7 @@ protected:
     int nMisbehavior;
 
 public:
-    int64_t nReleaseTime;
+    int64  nReleaseTime;
     std::map<uint256, CRequestTracker> mapRequests;
     CCriticalSection cs_mapRequests;
     uint256 hashContinue;
