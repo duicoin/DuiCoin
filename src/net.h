@@ -278,7 +278,7 @@ public:
         return std::max(nRefCount, 0) + (GetTime() < nReleaseTime ? 1 : 0);
     }
 
-    CNode* AddRef(int64_t nTimeout=0)
+    CNode* AddRef(int64 nTimeout=0)
     {
         if (nTimeout != 0)
             nReleaseTime = std::max(nReleaseTime, GetTime() + nTimeout);
