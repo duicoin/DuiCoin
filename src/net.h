@@ -168,12 +168,12 @@ public:
     uint64_t nRecvBytes;
     CCriticalSection cs_vSend;
     CCriticalSection cs_vRecv;
-    int64_t nLastSend;
-    int64_t nLastRecv;
-    int64_t nLastSendEmpty;
-    int64_t nTimeConnected;
-    int32_t nHeaderStart;
-    uint32_t nMessageStart;
+    int64 nLastSend;
+    int64 nLastRecv;
+    int64 nLastSendEmpty;
+    int64 nTimeConnected;
+    int nHeaderStart;
+    unsigned int nMessageStart;
     CAddress addr;
     std::string addrName;
     CService addrLocal;
@@ -330,13 +330,13 @@ public:
     {
         // We're using mapAskFor as a priority queue,
         // the key is the earliest time the request can be sent
-        int64_t& nRequestTime = mapAlreadyAskedFor[inv];
+        int64& nRequestTime = mapAlreadyAskedFor[inv];
         if (fDebugNet)
             printf("askfor %s   %" PRId64 " (%s)\n", inv.ToString().c_str(), nRequestTime, DateTimeStrFormat("%H:%M:%S", nRequestTime/1000000).c_str());
 
         // Make sure not to reuse time indexes to keep things in the same order
-        int64_t nNow = (GetTime() - 1) * 1000000;
-        static int64_t nLastTime;
+        int64 nNow = (GetTime() - 1) * 1000000;
+        static int64 nLastTime;
         ++nLastTime;
         nNow = std::max(nNow, nLastTime);
         nLastTime = nNow;
@@ -353,9 +353,9 @@ public:
         ENTER_CRITICAL_SECTION(cs_vSend);
         if (nHeaderStart != -1)
             AbortMessage();
-        nHeaderStart = (int32_t)vSend.size();
+        nHeaderStart = vSend.size();
         vSend << CMessageHeader(pszCommand, 0);
-        nMessageStart = (uint32_t)vSend.size();
+        nMessageStart = vSend.size();
         if (fDebug)
             printf("sending: %s ", pszCommand);
     }
@@ -386,12 +386,12 @@ public:
             return;
 
         // Set the size
-        uint32_t nSize = (uint32_t) vSend.size() - nMessageStart;
+        unsigned int nSize = vSend.size() - nMessageStart;
         memcpy((char*)&vSend[nHeaderStart] + CMessageHeader::MESSAGE_SIZE_OFFSET, &nSize, sizeof(nSize));
 
         // Set the checksum
         uint256 hash = Hash(vSend.begin() + nMessageStart, vSend.end());
-        uint32_t nChecksum = 0;
+        unsigned int nChecksum = 0;
         memcpy(&nChecksum, &hash, sizeof(nChecksum));
         assert(nMessageStart - nHeaderStart >= CMessageHeader::CHECKSUM_OFFSET + sizeof(nChecksum));
         memcpy((char*)&vSend[nHeaderStart] + CMessageHeader::CHECKSUM_OFFSET, &nChecksum, sizeof(nChecksum));
